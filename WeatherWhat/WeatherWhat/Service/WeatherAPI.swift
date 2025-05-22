@@ -38,9 +38,11 @@ extension WeatherAPI: TargetType {
     }
 
     // task가 딕셔너리 타입이라서 순서를 보장하지는 않지만, 쿼리 파라미터는 순서와 상관이 없음
+    // requestPlain으로 request를 그대로 반환하도록(없으면 빈값을 반환하도록 설정)
     var task: Task {
         guard let apiKey = Bundle.main.infoDictionary?["APIKey"] as? String else {
-            fatalError("Configuration에 정의된 키가 없습니다")
+            assertionFailure("APIKey 누락 - Info.plist 확인 요망")
+            return .requestPlain
         }
 
         switch self {
