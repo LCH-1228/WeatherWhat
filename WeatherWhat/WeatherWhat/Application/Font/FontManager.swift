@@ -9,25 +9,6 @@ import UIKit
 
 extension UIFont {
     
-    enum CustomFont {
-        case suit(Suit)
-        case electricalsafety(Electricalsafety)
-        case custom(name: String)
-        
-        var fontName: String {
-            switch self {
-            case .suit(let type): return type.rawValue
-            case .electricalsafety(let type): return type.rawValue
-            case .custom(let name): return name
-            }
-        }
-    }
-    
-    static func custom(_ type: CustomFont, size: CGFloat = 17) -> UIFont {
-        return UIFont(name: type.fontName, size: size) ?? UIFont.systemFont(ofSize: size)
-    }
-    
-    
     enum Suit: String {
         case regular = "SUIT-Regular"
         case bold = "SUIT-Bold"
@@ -36,5 +17,17 @@ extension UIFont {
 
     enum Electricalsafety: String {
         case regular = "Electrical Safety Regular"
+    }
+
+    private static func loadFont(named name: String, size: CGFloat) -> UIFont {
+        UIFont(name: name, size: size) ?? UIFont.systemFont(ofSize: size)
+    }
+
+    static func suit(_ style: Suit, size: CGFloat = 17) -> UIFont {
+        return loadFont(named: style.rawValue, size: size)
+    }
+
+    static func electricalsafety(_ style: Electricalsafety, size: CGFloat = 17) -> UIFont {
+        return loadFont(named: style.rawValue, size: size)
     }
 }
