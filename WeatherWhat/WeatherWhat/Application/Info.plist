@@ -4,7 +4,10 @@
 <dict>
 	<key>UIAppFonts</key>
 	<array>
-		<string>BMKkubulimTTF.ttf</string>
+		<string>SUIT-Bold.ttf</string>
+		<string>SUIT-ExtraBold.ttf</string>
+		<string>SUIT-Regular.ttf</string>
+		<string>Electrical Safety Regular.ttf</string>
 	</array>
 	<key>APIKey</key>
 	<string>$(APIKey)</string>
