@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9B582FCB2DDF473A006CD1F8 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 9B582FCA2DDF473A006CD1F8 /* Moya */; };
+		9B582FCD2DDF473A006CD1F8 /* RxMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 9B582FCC2DDF473A006CD1F8 /* RxMoya */; };
 		9BAADF442DDD9D3B0036E119 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9BAADF432DDD9D3B0036E119 /* SnapKit */; };
 		9BAADF472DDD9D590036E119 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 9BAADF462DDD9D590036E119 /* RxCocoa */; };
 		9BAADF492DDD9D590036E119 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 9BAADF482DDD9D590036E119 /* RxRelay */; };
@@ -46,7 +48,9 @@
 			files = (
 				9BAADF492DDD9D590036E119 /* RxRelay in Frameworks */,
 				9BAADF472DDD9D590036E119 /* RxCocoa in Frameworks */,
+				9B582FCB2DDF473A006CD1F8 /* Moya in Frameworks */,
 				9BAADF4B2DDD9D590036E119 /* RxSwift in Frameworks */,
+				9B582FCD2DDF473A006CD1F8 /* RxMoya in Frameworks */,
 				9BAADF4E2DDD9D7A0036E119 /* RxDataSources in Frameworks */,
 				9BAADF442DDD9D3B0036E119 /* SnapKit in Frameworks */,
 			);
@@ -96,6 +100,8 @@
 				9BAADF482DDD9D590036E119 /* RxRelay */,
 				9BAADF4A2DDD9D590036E119 /* RxSwift */,
 				9BAADF4D2DDD9D7A0036E119 /* RxDataSources */,
+				9B582FCA2DDF473A006CD1F8 /* Moya */,
+				9B582FCC2DDF473A006CD1F8 /* RxMoya */,
 			);
 			productName = WeatherWhat;
 			productReference = 9BAADF262DDD99C40036E119 /* WeatherWhat.app */;
@@ -129,6 +135,7 @@
 				9BAADF422DDD9D3B0036E119 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				9BAADF452DDD9D590036E119 /* XCRemoteSwiftPackageReference "RxSwift" */,
 				9BAADF4C2DDD9D7A0036E119 /* XCRemoteSwiftPackageReference "RxDataSources" */,
+				9B582FC92DDF473A006CD1F8 /* XCRemoteSwiftPackageReference "Moya" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9BAADF272DDD99C40036E119 /* Products */;
@@ -362,6 +369,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		9B582FC92DDF473A006CD1F8 /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 15.0.3;
+			};
+		};
 		9BAADF422DDD9D3B0036E119 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
@@ -389,6 +404,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		9B582FCA2DDF473A006CD1F8 /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9B582FC92DDF473A006CD1F8 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
+		9B582FCC2DDF473A006CD1F8 /* RxMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9B582FC92DDF473A006CD1F8 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = RxMoya;
+		};
 		9BAADF432DDD9D3B0036E119 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 9BAADF422DDD9D3B0036E119 /* XCRemoteSwiftPackageReference "SnapKit" */;
