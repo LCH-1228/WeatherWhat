@@ -7,9 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9B582FCB2DDF473A006CD1F8 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 9B582FCA2DDF473A006CD1F8 /* Moya */; };
-		9B582FCD2DDF473A006CD1F8 /* RxMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 9B582FCC2DDF473A006CD1F8 /* RxMoya */; };
-		9B5AD9FE2DDF5FF100E116B3 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 9B5AD9FD2DDF5FF100E116B3 /* RxDataSources */; };
+		886122152DDDE1B100C11652 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 886122142DDDE1B100C11652 /* RxDataSources */; };
 		9BAADF442DDD9D3B0036E119 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 9BAADF432DDD9D3B0036E119 /* SnapKit */; };
 		9BAADF472DDD9D590036E119 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 9BAADF462DDD9D590036E119 /* RxCocoa */; };
 		9BAADF492DDD9D590036E119 /* RxRelay in Frameworks */ = {isa = PBXBuildFile; productRef = 9BAADF482DDD9D590036E119 /* RxRelay */; };
@@ -48,10 +46,8 @@
 			files = (
 				9BAADF492DDD9D590036E119 /* RxRelay in Frameworks */,
 				9BAADF472DDD9D590036E119 /* RxCocoa in Frameworks */,
-				9B582FCB2DDF473A006CD1F8 /* Moya in Frameworks */,
 				9BAADF4B2DDD9D590036E119 /* RxSwift in Frameworks */,
-				9B5AD9FE2DDF5FF100E116B3 /* RxDataSources in Frameworks */,
-				9B582FCD2DDF473A006CD1F8 /* RxMoya in Frameworks */,
+				886122152DDDE1B100C11652 /* RxDataSources in Frameworks */,
 				9BAADF442DDD9D3B0036E119 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -99,9 +95,7 @@
 				9BAADF462DDD9D590036E119 /* RxCocoa */,
 				9BAADF482DDD9D590036E119 /* RxRelay */,
 				9BAADF4A2DDD9D590036E119 /* RxSwift */,
-				9B582FCA2DDF473A006CD1F8 /* Moya */,
-				9B582FCC2DDF473A006CD1F8 /* RxMoya */,
-				9B5AD9FD2DDF5FF100E116B3 /* RxDataSources */,
+				886122142DDDE1B100C11652 /* RxDataSources */,
 			);
 			productName = WeatherWhat;
 			productReference = 9BAADF262DDD99C40036E119 /* WeatherWhat.app */;
@@ -134,8 +128,7 @@
 			packageReferences = (
 				9BAADF422DDD9D3B0036E119 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				9BAADF452DDD9D590036E119 /* XCRemoteSwiftPackageReference "RxSwift" */,
-				9B582FC92DDF473A006CD1F8 /* XCRemoteSwiftPackageReference "Moya" */,
-				9B5AD9FC2DDF5FF100E116B3 /* XCRemoteSwiftPackageReference "RxDataSources" */,
+				886122132DDDE1B100C11652 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9BAADF272DDD99C40036E119 /* Products */;
@@ -369,15 +362,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		9B582FC92DDF473A006CD1F8 /* XCRemoteSwiftPackageReference "Moya" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Moya/Moya.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 15.0.3;
-			};
-		};
-		9B5AD9FC2DDF5FF100E116B3 /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
+		886122132DDDE1B100C11652 /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources.git";
 			requirement = {
@@ -404,19 +389,9 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		9B582FCA2DDF473A006CD1F8 /* Moya */ = {
+		886122142DDDE1B100C11652 /* RxDataSources */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9B582FC92DDF473A006CD1F8 /* XCRemoteSwiftPackageReference "Moya" */;
-			productName = Moya;
-		};
-		9B582FCC2DDF473A006CD1F8 /* RxMoya */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9B582FC92DDF473A006CD1F8 /* XCRemoteSwiftPackageReference "Moya" */;
-			productName = RxMoya;
-		};
-		9B5AD9FD2DDF5FF100E116B3 /* RxDataSources */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 9B5AD9FC2DDF5FF100E116B3 /* XCRemoteSwiftPackageReference "RxDataSources" */;
+			package = 886122132DDDE1B100C11652 /* XCRemoteSwiftPackageReference "RxDataSources" */;
 			productName = RxDataSources;
 		};
 		9BAADF432DDD9D3B0036E119 /* SnapKit */ = {
