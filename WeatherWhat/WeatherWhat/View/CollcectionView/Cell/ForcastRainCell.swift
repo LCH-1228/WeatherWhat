@@ -13,10 +13,8 @@ final class ForcastRainCell: UICollectionViewCell {
     private let timeLabel: UILabel = {
         let label = UILabel()
         label.textColor = .pureBlack
-        label.font = .suit(.bold, size: 24)
+        label.font = .suit(.bold, size: 10)
         label.textAlignment = .center
-        label.adjustsFontSizeToFitWidth = true
-        label.minimumScaleFactor = 0.5
         return label
     }()
     
@@ -29,7 +27,8 @@ final class ForcastRainCell: UICollectionViewCell {
     private let tempLabel: UILabel = {
         let label = UILabel()
         label.textColor = .pureBlack
-        label.font = .suit(.bold, size: 12)
+        label.font = .suit(.bold, size: 10)
+        label.textAlignment = .center
         return label
     }()
     
@@ -42,7 +41,7 @@ final class ForcastRainCell: UICollectionViewCell {
                                         ])
         stackView.axis = .vertical
         stackView.alignment = .center
-        stackView.spacing = 6
+        stackView.spacing = 5
         stackView.distribution = .equalCentering
         return stackView
     }()
@@ -75,7 +74,8 @@ final class ForcastRainCell: UICollectionViewCell {
         
         stackView.snp.makeConstraints {
             $0.horizontalEdges.equalTo(contentView.snp.horizontalEdges)
-            $0.verticalEdges.equalTo(contentView.snp.verticalEdges).inset(16)
+            $0.top.equalTo(contentView.snp.top).inset(9)
+            $0.bottom.equalTo(contentView.snp.bottom).inset(7)
         }
         
     }

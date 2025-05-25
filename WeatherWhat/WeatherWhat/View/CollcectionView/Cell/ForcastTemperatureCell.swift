@@ -13,7 +13,8 @@ final class ForcastTemperatureCell: UICollectionViewCell {
     private let timeLabel: UILabel = {
         let label = UILabel()
         label.textColor = .pureBlack
-        label.font = .suit(.bold, size: 12)
+        label.font = .suit(.bold, size: 10)
+        label.textAlignment = .center
         return label
     }()
     
@@ -26,7 +27,8 @@ final class ForcastTemperatureCell: UICollectionViewCell {
     private let tempLabel: UILabel = {
         let label = UILabel()
         label.textColor = .pureBlack
-        label.font = .boldSystemFont(ofSize: 12)
+        label.font = .boldSystemFont(ofSize: 10)
+        label.textAlignment = .center
         return label
     }()
     
@@ -39,7 +41,6 @@ final class ForcastTemperatureCell: UICollectionViewCell {
                                         ])
         stackView.axis = .vertical
         stackView.alignment = .center
-        stackView.spacing = 6
         stackView.distribution = .equalCentering
         return stackView
     }()
@@ -66,13 +67,17 @@ final class ForcastTemperatureCell: UICollectionViewCell {
     private func setConstraints() {
         
         weatherImage.snp.makeConstraints {
-            $0.horizontalEdges.equalTo(stackView.snp.horizontalEdges).inset(16)
             $0.height.equalTo(weatherImage.snp.width)
+            $0.horizontalEdges.equalTo(stackView.snp.horizontalEdges).inset(16)
+            $0.top.equalTo(timeLabel.snp.bottom).offset(6)
+            $0.bottom.equalTo(tempLabel.snp.top).offset(-21)
+            
         }
         
         stackView.snp.makeConstraints {
             $0.horizontalEdges.equalTo(contentView.snp.horizontalEdges)
-            $0.verticalEdges.equalTo(contentView.snp.verticalEdges).inset(16)
+            $0.top.equalTo(contentView.snp.top).inset(10)
+            $0.bottom.equalTo(contentView.snp.bottom).inset(13)
         }
         
     }

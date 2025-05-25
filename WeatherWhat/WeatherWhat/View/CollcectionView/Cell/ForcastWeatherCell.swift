@@ -14,6 +14,7 @@ final class ForcastWeatherCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = .pureBlack
         label.font = .suit(.bold, size: 17)
+        label.textAlignment = .left
         return label
     }()
     
@@ -27,6 +28,7 @@ final class ForcastWeatherCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = .pureBlack
         label.font = .suit(.bold, size: 20)
+        label.textAlignment = .left
         return label
     }()
     
@@ -35,6 +37,7 @@ final class ForcastWeatherCell: UICollectionViewCell {
         label.text = "/"
         label.textColor = .pureBlack
         label.font = .suit(.bold, size: 20)
+        label.textAlignment = .center
         return label
     }()
     
@@ -42,6 +45,7 @@ final class ForcastWeatherCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = .pureBlack
         label.font = .suit(.bold, size: 20)
+        label.textAlignment = .right
         return label
     }()
     
@@ -53,8 +57,6 @@ final class ForcastWeatherCell: UICollectionViewCell {
                                         ])
         stackView.axis = .horizontal
         stackView.alignment = .center
-        stackView.spacing = 6
-        stackView.distribution = .equalCentering
         return stackView
     }()
     
@@ -95,9 +97,8 @@ final class ForcastWeatherCell: UICollectionViewCell {
     private func setConstraints() {
         
         leadingStackView.snp.makeConstraints {
-            $0.width.equalTo(80)
             $0.leading.equalTo(contentView.snp.leading).inset(16)
-            $0.verticalEdges.equalTo(contentView.snp.verticalEdges).inset(24)
+            $0.verticalEdges.equalTo(contentView.snp.verticalEdges).inset(22)
             $0.centerY.equalTo(contentView.snp.centerY)
         }
         
@@ -106,8 +107,10 @@ final class ForcastWeatherCell: UICollectionViewCell {
         }
         
         weatherImage.snp.makeConstraints {
-            $0.verticalEdges.equalTo(leadingStackView.snp.verticalEdges)
             $0.width.equalTo(weatherImage.snp.height)
+            $0.leading.equalTo(leadingStackView.snp.leading).inset(66)
+            $0.verticalEdges.equalTo(leadingStackView.snp.verticalEdges)
+            
         }
         
         trailingStackView.snp.makeConstraints {

@@ -189,8 +189,8 @@ private extension MainViewController {
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
         let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(0.2),
-            heightDimension: .fractionalWidth(0.4)
+            widthDimension: .fractionalWidth(1/6.42),
+            heightDimension: .fractionalWidth(1/3.63)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: groupSize,
@@ -249,8 +249,8 @@ private extension MainViewController {
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
         let groupSize = NSCollectionLayoutSize(
-            widthDimension: .fractionalWidth(0.2),
-            heightDimension: .fractionalWidth(0.3)
+            widthDimension: .fractionalWidth(1/6.42),
+            heightDimension: .fractionalWidth(1/4.64)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: groupSize,
@@ -310,7 +310,7 @@ private extension MainViewController {
         
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .fractionalHeight(1/10)
+            heightDimension: .fractionalHeight(1/10.4)
         )
         let group = NSCollectionLayoutGroup.vertical(
             layoutSize: groupSize,
@@ -330,7 +330,7 @@ private extension MainViewController {
         // header 표시를 위한 boundarySupplementaryItem 생성
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(0.5),
-            heightDimension: .absolute(44)
+            heightDimension: .absolute(43)
         )
         let headerView = NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: headerSize,
@@ -344,7 +344,7 @@ private extension MainViewController {
         )
         
         // decorationItem 크기 조정을 위한 inset 설정
-        sectionBackgroundDecoration.contentInsets = .init(top: 36,
+        sectionBackgroundDecoration.contentInsets = .init(top: 35,
                                                           leading: 0,
                                                           bottom: 0,
                                                           trailing: 0)
