@@ -8,5 +8,5 @@
 import Foundation
 
 struct LocationHistory: Codable {
-    var history: [UserLocationData]
+    var history: [LocationData]
 }
