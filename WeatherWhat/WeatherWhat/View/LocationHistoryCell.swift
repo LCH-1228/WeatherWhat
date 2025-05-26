@@ -48,7 +48,7 @@ class LocationHistoryCell: UITableViewCell {
         }
     }
 
-    func configureCell(data: LocationHistory, indexPath: IndexPath) {
-        label.text = data.history[indexPath.row].address
+    func configureCell(data: [LocationData], indexPath: IndexPath) {
+        label.text = data[indexPath.row].address
     }
 }

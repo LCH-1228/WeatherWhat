@@ -13,7 +13,7 @@ import RxSwift
 final class SearchView: UIView {
 
     let searchBar = UISearchBar()
-    let historyTableView = UITableView()
+    let tableView = UITableView()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -28,13 +28,13 @@ final class SearchView: UIView {
     }
 
     private func configureUI() {
-        [historyTableView, searchBar].forEach {
+        [tableView, searchBar].forEach {
             self.addSubview($0)
         }
 
-        historyTableView.backgroundColor = .subBlue
-        historyTableView.layer.cornerRadius = 13
-        historyTableView.contentInset = .init(top: 30, left: 0, bottom: 0, right: 0)
+        tableView.backgroundColor = .subBlue
+        tableView.layer.cornerRadius = 13
+        tableView.contentInset = .init(top: 30, left: 0, bottom: 0, right: 0)
 
         searchBar.showsCancelButton = false
         searchBar.searchTextField.backgroundColor = .pureWhite
@@ -52,20 +52,20 @@ final class SearchView: UIView {
             make.height.equalTo(40)
         }
 
-        historyTableView.snp.makeConstraints { make in
+        tableView.snp.makeConstraints { make in
             make.leading.trailing.bottom.equalToSuperview()
             make.top.equalTo(searchBar.snp.bottom).inset(30)
         }
     }
 
     func showHistoryView(_ isVisible: Bool) {
-        historyTableView.isHidden = !isVisible
+        tableView.isHidden = true
     }
 
 }
 
 extension Reactive where Base: SearchView {
-    var searchText: ControlProperty<String?> {
-        return base.searchBar.rx.text
+    var searchText: ControlProperty<String> {
+        return base.searchBar.rx.text.orEmpty
     }
 }
