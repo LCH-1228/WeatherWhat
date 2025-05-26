@@ -18,10 +18,10 @@ final class SplashViewController: UIViewController {
         view.backgroundColor = .white
         view.addSubview(logoImageView)
         logoImageView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(374)
             make.leading.equalToSuperview().offset(94)
-            make.width.equalTo(186)
+            make.trailing.equalToSuperview().inset(94)
             make.height.equalTo(88)
+            make.centerY.equalToSuperview()
         }
     }
     override func viewDidAppear(_ animated: Bool) {
