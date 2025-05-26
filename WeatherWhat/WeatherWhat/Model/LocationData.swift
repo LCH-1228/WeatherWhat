@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UserLocationData: Codable {
+struct LocationData: Codable {
     let address: String
     let lat: String
     let lon: String
