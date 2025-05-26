@@ -11,6 +11,8 @@ import RxSwift
 
 class SearchViewModel {
 
+    let userDefaults = UserDefaultsManager.shared
+
     let totalData = TotalAddressDataInfo().getAllData()
 
     // totalInfo는 Observable
@@ -26,7 +28,17 @@ class SearchViewModel {
                     .filter { $0.contains(str) }
             }
 
-        return .init(completedData: userInput)
+        let selectedAddress = input.addressSelected
+            .withLatestFrom(userInput) { indexPath, str in
+                str[indexPath.row]
+            }
+            .map { selectedStr in
+                self.totalData.first { $0.address == selectedStr }
+            }
+            .compactMap { $0 }
+
+
+        return .init(completedData: userInput, selectedData: selectedAddress)
     }
 
 }
@@ -34,9 +46,11 @@ class SearchViewModel {
 extension SearchViewModel {
     struct Input {
         let addressInput: Observable<String>
+        let addressSelected: Observable<IndexPath>
     }
 
     struct Output {
         let completedData: Observable<[String]>
+        let selectedData: Observable<LocationData>
     }
 }

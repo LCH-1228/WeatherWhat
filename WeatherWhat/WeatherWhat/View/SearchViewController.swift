@@ -24,11 +24,27 @@ class SearchViewController: UIViewController {
 
         searchView.tableView.register(LocationHistoryCell.self, forCellReuseIdentifier: String(describing: LocationHistoryCell.self))
         searchView.tableView.register(AutoCompleteCell.self, forCellReuseIdentifier: String(describing: AutoCompleteCell.self))
-        searchView.tableView.reloadData()
+
+        searchView.tableView.rowHeight = 40
+        searchView.tableView.estimatedRowHeight = 40
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.isNavigationBarHidden = false
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        navigationController?.isNavigationBarHidden = true
     }
 
     func configureUI() {
         [searchView].forEach { view.addSubview($0) }
+        view.backgroundColor = .white
     }
 
     func setConstraints() {
@@ -38,13 +54,14 @@ class SearchViewController: UIViewController {
             make.leading.equalToSuperview().offset(23)
             make.trailing.equalToSuperview().offset(-23)
         }
-
-        searchView.tableView.rowHeight = 40
     }
 
     func bind() {
 
-        let input = SearchViewModel.Input(addressInput: searchView.rx.searchText.asObservable())
+        let input = SearchViewModel.Input(
+            addressInput: searchView.rx.searchText.asObservable(),
+            addressSelected: searchView.tableView.rx.itemSelected.asObservable()
+        )
 
         let output = viewModel.transform(with: input)
 
@@ -52,6 +69,15 @@ class SearchViewController: UIViewController {
             .asDriver(onErrorDriveWith: .empty())
             .drive(searchView.tableView.rx.items(cellIdentifier: String(describing: AutoCompleteCell.self), cellType: AutoCompleteCell.self)) { (row, element, cell) in
                 cell.configureCell(data: element)
+            }
+            .disposed(by: disposeBag)
+
+        output.selectedData
+            .withUnretained(self)
+            .asDriver(onErrorDriveWith: .empty())
+            .drive { vc, selectedLocation in
+                vc.viewModel.userDefaults.saveData(key: .currentLocation, value: selectedLocation)
+                vc.navigationController?.pushViewController(ViewController(), animated: true)
             }
             .disposed(by: disposeBag)
     }

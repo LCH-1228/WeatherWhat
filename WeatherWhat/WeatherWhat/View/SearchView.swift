@@ -37,12 +37,13 @@ final class SearchView: UIView {
         tableView.contentInset = .init(top: 30, left: 0, bottom: 0, right: 0)
 
         searchBar.showsCancelButton = false
+        searchBar.searchBarStyle = .default
         searchBar.searchTextField.backgroundColor = .pureWhite
+        searchBar.clipsToBounds = true
         searchBar.layer.borderWidth = 2
         searchBar.layer.cornerRadius = 10
         searchBar.placeholder = "위치를 입력해주세요."
         searchBar.searchTextField.font = .suit(.regular, size: 15)
-        searchBar.layer.masksToBounds = true
         searchBar.layer.borderColor = UIColor.mainBlue.cgColor
     }
 
