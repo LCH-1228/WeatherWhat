@@ -75,7 +75,7 @@ class InitialViewController: UIViewController {
             .asDriver(onErrorDriveWith: .empty())
             .drive { vc, selectedLocation in
                 vc.viewModel.userDefaults.saveData(key: .currentLocation, value: selectedLocation)
-                if let savedLocation: LocationData = vc.viewModel.userDefaults.getData(with: .currentLocation) {
+                if let savedLocation: LocationData = try? vc.viewModel.userDefaults.getData(with: .currentLocation) {
                     vc.searchView.searchBar.searchTextField.text = "검색 위치: \(savedLocation.address)"
                     vc.searchView.tableView.isHidden = true
                 }
