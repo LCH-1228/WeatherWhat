@@ -41,7 +41,7 @@ final class UserDefaultsManager {
        위치 데이터를 추가할 수 있는 메서드입니다.
      - 데이터는 배열형태로 저장되며, locationHistory key에 접근하여 확인할 수 있습니다.
      */
-    func updateLocationHistory(with locationData: UserLocationData) {
+    func updateLocationHistory(with locationData: LocationData) {
         var userHistory = getData(with: .locationHistory) ?? LocationHistory(history: [])
             userHistory.history.insert(locationData, at: 0)
             saveData(key: .locationHistory, value: userHistory)

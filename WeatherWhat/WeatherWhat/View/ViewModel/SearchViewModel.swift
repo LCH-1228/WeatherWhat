@@ -9,48 +9,58 @@ import Foundation
 import RxCocoa
 import RxSwift
 
-class SearchViewModel {
-
-    let userDefaults = UserDefaultsManager.shared
+final class SearchViewModel {
 
     let totalData = TotalAddressDataInfo().getAllData()
 
-    // totalInfo는 Observable
-    let totalInfo = BehaviorRelay(value: TotalAddressDataInfo().getAllData())
+    let userDefaults = UserDefaultsManager.shared
 
-    func transform(with input: Input) -> Output {
-        // 서울
+    func transform(input: Input) -> Output {
         let userInput = input.addressInput
             .withUnretained(self)
-            .map { vm, str in
-                vm.totalData
-                    .map { $0.address }
-                    .filter { $0.contains(str) }
+            .map { vm, text in
+                if text == "init" || text.isEmpty {
+                    if let locationHistory: LocationHistory = try? vm.userDefaults.getData(with: .locationHistory) {
+                        return locationHistory.history.map { ($0.address, true) }
+                    } else {
+                        return []
+                    }
+                } else {
+                    return self.totalData
+                        .map { ($0.address, false) }
+                        .filter { $0.0.contains(text) }
+                }
             }
+            .share()
 
         let selectedAddress = input.addressSelected
-            .withLatestFrom(userInput) { indexPath, str in
-                str[indexPath.row]
+            .withLatestFrom(userInput) { indexPath, text in
+                text[indexPath.row].0
             }
-            .map { selectedStr in
-                self.totalData.first { $0.address == selectedStr }
+            .withUnretained(self)
+            .map { vm, seletedItem in
+                vm.totalData.first { $0.address == seletedItem }
             }
             .compactMap { $0 }
 
+        let isTableViewHidden = input.addressInput
+            .map { text -> Bool in
+                text.isEmpty
+            }
 
-        return .init(completedData: userInput, selectedData: selectedAddress)
+        return .init(completedData: userInput, selectedData: selectedAddress, isTableViewHidden: isTableViewHidden)
     }
-
 }
 
-extension SearchViewModel {
+extension SearchViewModel{
     struct Input {
         let addressInput: Observable<String>
         let addressSelected: Observable<IndexPath>
     }
 
     struct Output {
-        let completedData: Observable<[String]>
+        let completedData: Observable<[(String, Bool)]>
         let selectedData: Observable<LocationData>
+        let isTableViewHidden: Observable<Bool>
     }
 }

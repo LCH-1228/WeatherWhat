@@ -6,11 +6,15 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class LocationHistoryCell: UITableViewCell {
 
     let label = UILabel()
     let cancelButton = UIButton()
+
+    let disposeBag = DisposeBag()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -26,7 +30,7 @@ class LocationHistoryCell: UITableViewCell {
         self.backgroundColor = .clear
 
         [label, cancelButton].forEach {
-            self.addSubview($0)
+            self.contentView.addSubview($0)
         }
 
         label.font = .suit(.regular, size: 13)
@@ -48,7 +52,14 @@ class LocationHistoryCell: UITableViewCell {
         }
     }
 
-    func configureCell(data: [LocationData], indexPath: IndexPath) {
-        label.text = data[indexPath.row].address
+    func configureCell(data: String) {
+        label.text = data
+    }
+}
+
+extension Reactive where Base: LocationHistoryCell {
+    var buttonTap: ControlEvent<Void> {
+        let buttonTap = base.cancelButton.rx.tap
+        return buttonTap
     }
 }

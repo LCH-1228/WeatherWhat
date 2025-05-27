@@ -15,11 +15,14 @@ class SearchViewController: UIViewController {
     let viewModel = SearchViewModel()
 
     let searchView = SearchView()
+    let backButton = UIButton()
+    let titleLabel = UILabel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         configureUI()
         setConstraints()
+        backButtonTapped()
         bind()
 
         searchView.tableView.register(LocationHistoryCell.self, forCellReuseIdentifier: String(describing: LocationHistoryCell.self))
@@ -33,27 +36,45 @@ class SearchViewController: UIViewController {
         navigationController?.isNavigationBarHidden = false
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-    }
-
-    override func viewDidDisappear(_ animated: Bool) {
-        navigationController?.isNavigationBarHidden = true
-    }
-
     func configureUI() {
-        [searchView].forEach { view.addSubview($0) }
+        [backButton, titleLabel, searchView].forEach { view.addSubview($0) }
         view.backgroundColor = .white
+
+        backButton.setImage(.backIcon, for: .normal)
+        titleLabel.text = "검색"
+        titleLabel.font = .suit(.extrabold, size: 20)
     }
 
     func setConstraints() {
+
+        backButton.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(5)
+            make.leading.equalToSuperview().offset(31)
+            make.trailing.equalTo(backButton.snp.leading).offset(12)
+            make.bottom.equalTo(searchView.snp.top).offset(-26)
+        }
+
+        titleLabel.snp.makeConstraints { make in
+            make.centerY.equalTo(backButton.snp.centerY)
+            make.leading.equalTo(backButton.snp.trailing).offset(12)
+        }
+
         searchView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(105)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(51)
             make.bottom.equalToSuperview().offset(-421)
             make.leading.equalToSuperview().offset(23)
             make.trailing.equalToSuperview().offset(-23)
         }
+    }
+
+    func backButtonTapped() {
+        backButton.rx.tap
+            .withUnretained(self)
+            .asDriver(onErrorDriveWith: .empty())
+            .drive { vc, _ in
+                vc.navigationController?.pushViewController(MainViewController(), animated: true)
+            }
+            .disposed(by: disposeBag)
     }
 
     func bind() {
@@ -63,12 +84,30 @@ class SearchViewController: UIViewController {
             addressSelected: searchView.tableView.rx.itemSelected.asObservable()
         )
 
-        let output = viewModel.transform(with: input)
+        let output = viewModel.transform(input: input)
 
         output.completedData
             .asDriver(onErrorDriveWith: .empty())
-            .drive(searchView.tableView.rx.items(cellIdentifier: String(describing: AutoCompleteCell.self), cellType: AutoCompleteCell.self)) { (row, element, cell) in
-                cell.configureCell(data: element)
+            .drive(searchView.tableView.rx.items) { (tableView, row, element) in
+                let isEmpty = element.1
+                let data = element.0
+                if isEmpty {
+                    guard let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: LocationHistoryCell.self)) as? LocationHistoryCell else { return .init() }
+                    cell.configureCell(data: data)
+
+                    cell.cancelButton.rx.tap
+                        .asDriver(onErrorDriveWith: .empty())
+                        .drive(onNext: {
+                            UserDefaultsManager.shared.removeData(index: row)
+                        })
+                        .disposed(by: cell.disposeBag)
+
+                    return cell
+                } else {
+                    guard let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: AutoCompleteCell.self)) as? AutoCompleteCell else { return .init() }
+                    cell.configureCell(data: data)
+                    return cell
+                }
             }
             .disposed(by: disposeBag)
 
@@ -77,8 +116,22 @@ class SearchViewController: UIViewController {
             .asDriver(onErrorDriveWith: .empty())
             .drive { vc, selectedLocation in
                 vc.viewModel.userDefaults.saveData(key: .currentLocation, value: selectedLocation)
-                vc.navigationController?.pushViewController(ViewController(), animated: true)
+
+                if let currentLocation: LocationData = try? UserDefaultsManager.shared.getData(with: .currentLocation) {
+                    vc.viewModel.userDefaults.updateLocationHistory(with: currentLocation)
+                } else {
+                    vc.viewModel.userDefaults.updateLocationHistory(with: selectedLocation)
+                }
+
+                vc.navigationController?.pushViewController(MainViewController(), animated: true)
             }
+            .disposed(by: disposeBag)
+
+        output.isTableViewHidden
+            .withUnretained(self)
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(onNext: { vc, toggle in
+                vc.searchView.tableView.isHidden = toggle })
             .disposed(by: disposeBag)
     }
 }
