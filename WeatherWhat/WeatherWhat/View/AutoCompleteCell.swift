@@ -41,7 +41,7 @@ class AutoCompleteCell: UITableViewCell {
     }
 
     // 자동완성 모델의 데이터를 받아오면 되고, 임시로 UserLocationData로 입력
-    func configureCell(data: UserLocationData) {
-        label.text = data.address
+    func configureCell(data: String) {
+        label.text = data
     }
 }
