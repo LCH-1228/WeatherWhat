@@ -122,7 +122,7 @@ final class ForcastWeatherCell: UICollectionViewCell {
     func configure(with data: SectionOfCellModel.CellModel) {
         switch data {
         case .dayForecastResult(let forcastData):
-            dayLabel.text = "월"
+            dayLabel.text = forcastData.day
             weatherImage.image = UIImage(named: forcastData.weatherIcon)
             tempMinLabel.text = forcastData.tempMin
             tempMaxLabel.text = forcastData.tempMax
