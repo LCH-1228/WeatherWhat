@@ -20,8 +20,8 @@ final class SplashViewController: UIViewController {
         logoImageView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(94)
             make.trailing.equalToSuperview().inset(94)
-            make.height.equalTo(88)
-            make.centerY.equalToSuperview()
+            make.top.equalToSuperview().offset(362)
+            make.bottom.equalToSuperview().inset(362)
         }
     }
     override func viewDidAppear(_ animated: Bool) {
