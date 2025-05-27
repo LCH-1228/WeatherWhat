@@ -7,16 +7,17 @@
 
 import UIKit
 import RxSwift
+import RxCocoa
 
-class SearchViewController: UIViewController {
+final class SearchViewController: UIViewController {
 
-    let disposeBag = DisposeBag()
+    private var disposeBag = DisposeBag()
 
-    let viewModel = SearchViewModel()
+    private let viewModel = SearchViewModel()
 
-    let searchView = SearchView()
-    let backButton = UIButton()
-    let titleLabel = UILabel()
+    private let searchView = SearchView()
+    private let backButton = UIButton()
+    private let titleLabel = UILabel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,12 +32,12 @@ class SearchViewController: UIViewController {
         searchView.tableView.rowHeight = 40
         searchView.tableView.estimatedRowHeight = 40
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         navigationController?.isNavigationBarHidden = false
     }
 
-    func configureUI() {
+    private func configureUI() {
         [backButton, titleLabel, searchView].forEach { view.addSubview($0) }
         view.backgroundColor = .white
 
@@ -45,7 +46,7 @@ class SearchViewController: UIViewController {
         titleLabel.font = .suit(.extrabold, size: 20)
     }
 
-    func setConstraints() {
+    private func setConstraints() {
 
         backButton.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(5)
@@ -67,21 +68,24 @@ class SearchViewController: UIViewController {
         }
     }
 
-    func backButtonTapped() {
+    private func backButtonTapped() {
         backButton.rx.tap
             .withUnretained(self)
             .asDriver(onErrorDriveWith: .empty())
             .drive { vc, _ in
-                vc.navigationController?.pushViewController(MainViewController(), animated: true)
+                vc.navigationController?.popViewController(animated: true)
             }
             .disposed(by: disposeBag)
     }
 
-    func bind() {
+    private func bind() {
+
+        let deleteTapNum = PublishRelay<Int>()
 
         let input = SearchViewModel.Input(
             addressInput: searchView.rx.searchText.asObservable(),
-            addressSelected: searchView.tableView.rx.itemSelected.asObservable()
+            addressSelected: searchView.tableView.rx.itemSelected.asObservable(),
+            deleteRequest: deleteTapNum.asObservable()
         )
 
         let output = viewModel.transform(input: input)
@@ -89,20 +93,24 @@ class SearchViewController: UIViewController {
         output.completedData
             .asDriver(onErrorDriveWith: .empty())
             .drive(searchView.tableView.rx.items) { (tableView, row, element) in
-                let isEmpty = element.1
                 let data = element.0
+                let isEmpty = element.1
                 if isEmpty {
                     guard let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: LocationHistoryCell.self)) as? LocationHistoryCell else { return .init() }
                     cell.configureCell(data: data)
 
                     cell.cancelButton.rx.tap
-                        .asDriver(onErrorDriveWith: .empty())
-                        .drive(onNext: {
-                            UserDefaultsManager.shared.removeData(index: row)
-                        })
+                        .withUnretained(self)
+                        .compactMap{ vc, _ -> IndexPath? in
+                            vc.searchView.tableView.indexPath(for: cell)
+                        }
+                        .map { indexPath in
+                            indexPath.row
+                        }
+                        .bind(to: deleteTapNum)
                         .disposed(by: cell.disposeBag)
-
                     return cell
+
                 } else {
                     guard let cell = tableView.dequeueReusableCell(withIdentifier: String(describing: AutoCompleteCell.self)) as? AutoCompleteCell else { return .init() }
                     cell.configureCell(data: data)
@@ -122,8 +130,8 @@ class SearchViewController: UIViewController {
                 } else {
                     vc.viewModel.userDefaults.updateLocationHistory(with: selectedLocation)
                 }
-
-                vc.navigationController?.pushViewController(MainViewController(), animated: true)
+                let mainVC = MainViewController()
+                vc.navigationController?.pushViewController(mainVC, animated: true)
             }
             .disposed(by: disposeBag)
 
