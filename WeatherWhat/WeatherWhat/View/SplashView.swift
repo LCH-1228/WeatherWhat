@@ -28,8 +28,8 @@ final class SplashViewController: UIViewController {
         super.viewDidAppear(animated)
         // 1.2초 정도 보여준 뒤 메인 화면으로
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-            let mainVC = MainViewController()
-            let nav = UINavigationController(rootViewController: mainVC)
+            let initialVC = InitialViewController()
+            let nav = UINavigationController(rootViewController: initialVC)
             if let windowScene = self.view.window?.windowScene,
                let window = windowScene.windows.first {
                 window.rootViewController = nav

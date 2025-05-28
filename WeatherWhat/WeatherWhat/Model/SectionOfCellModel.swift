@@ -53,12 +53,14 @@ extension SectionOfCellModel: SectionModelType {
 
 extension SectionOfCellModel.CellModel {
     struct CurrentWeatherResult {
+        let toggleImage: String
         let address: String
         let weatherIcon: String
         let tempMax: String
         let tempMin: String
         let temp: String
         let description: String
+        let backgroundColor: String
     }
     
     struct TimeForecastResult {
@@ -75,7 +77,7 @@ extension SectionOfCellModel.CellModel {
     
     struct DayForecastResult {
         let weatherIcon: String
-        let day: Date
+        let day: String
         let tempMax: String
         let tempMin: String
     }
