@@ -13,8 +13,8 @@ import RxDataSources
 
 final class MainViewController: UIViewController {
     
-    var disposeBag = DisposeBag()
-    let viewModel = MainViewModel()
+    private var disposeBag = DisposeBag()
+    private let viewModel = MainViewModel()
     
     private lazy var weatherCollectionView = UICollectionView(frame: .zero,
                                                       collectionViewLayout: createLayout())
@@ -349,8 +349,7 @@ private extension MainViewController {
                                                           leading: 0,
                                                           bottom: 0,
                                                           trailing: 0)
-        
-        sectionBackgroundDecoration.zIndex = -1
+
         // 스크롤시 leading, trailing을 마스킹 하기 위한 decorationItem zIndex 설정
         sectionLeadingBackgroundDecoration.zIndex = 1
         sectionTrailingBackgroundDecoration.zIndex = 1
@@ -411,7 +410,6 @@ private extension MainViewController {
                                                           bottom: 0,
                                                           trailing: 0)
         
-        sectionBackgroundDecoration.zIndex = -1
         // 스크롤시 leading, trailing을 마스킹 하기 위한 decorationItem zIndex 설정
         sectionLeadingBackgroundDecoration.zIndex = 1
         sectionTrailingBackgroundDecoration.zIndex = 1
@@ -468,8 +466,6 @@ private extension MainViewController {
         let sectionBackgroundDecoration = NSCollectionLayoutDecorationItem.background(
             elementKind: "baseBackground"
         )
-        
-        sectionBackgroundDecoration.zIndex = -1
         
         // decorationItem 크기 조정을 위한 inset 설정
         sectionBackgroundDecoration.contentInsets = .init(top: 35,

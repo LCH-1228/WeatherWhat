@@ -1,5 +1,12 @@
+//
+//  WeatherDescriptionTranslator.swift
+//  WeatherWhat
+//
+//  Created by 박혜민 on 5/24/25.
+//
+
 enum WeatherDescriptionTranslator: String, Codable {
-    
+
     //Thunderstorm
     case thunderstormWithLightRain = "thunderstorm with light rain"
     case thunderstormWithRain = "thunderstorm with rain"
@@ -137,10 +144,5 @@ enum WeatherDescriptionTranslator: String, Codable {
         case .brokenClouds: return "구름이 많이 낀 하늘이에요"
         case .overcastClouds: return "구름이 완전히 뒤덮였어요"
         }
-    }
-    
-    static func getKoreanDescription(for englishDescription: String) -> String {
-        // 영어 설명에 해당하는 case의 한글 설명(displayName)을 반환하고, 일치하는 case가 없을 경우 입력값 그대로 출력
-        return WeatherDescriptionTranslator(rawValue: englishDescription.lowercased())?.displayName ?? englishDescription
     }
 }

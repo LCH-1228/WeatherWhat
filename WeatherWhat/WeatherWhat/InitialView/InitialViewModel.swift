@@ -9,12 +9,12 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-class InitialViewModel {
-    
+final class InitialViewModel {
+
     let userDefaults = UserDefaultsManager.shared
 
-    let totalData = TotalAddressDataInfo().getAllData()
-    
+    private let totalData = TotalAddressDataInfo().getAllData()
+
     func transform(with input: Input) -> Output {
         let userInput = input.addressInput
             .withUnretained(self)

@@ -15,7 +15,7 @@ final class SearchViewModel {
 
     let userDefaults = UserDefaultsManager.shared
 
-    var disposeBag = DisposeBag()
+    private var disposeBag = DisposeBag()
 
     func transform(input: Input) -> Output {
 
