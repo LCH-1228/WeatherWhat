@@ -7,7 +7,7 @@
 
 import UIKit
 
-class AutoCompleteCell: UITableViewCell {
+final class AutoCompleteCell: UITableViewCell {
 
     private let label = UILabel()
 
@@ -21,7 +21,7 @@ class AutoCompleteCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configureUI() {
+    private func configureUI() {
         [label].forEach {
             self.contentView.addSubview($0)
         }
@@ -32,7 +32,7 @@ class AutoCompleteCell: UITableViewCell {
         self.backgroundColor = .clear
     }
 
-    func setConstraints() {
+    private func setConstraints() {
         label.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
             make.leading.equalToSuperview().offset(11)
