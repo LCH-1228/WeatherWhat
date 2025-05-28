@@ -8,7 +8,8 @@ struct CurrentWeather: Decodable {
 extension CurrentWeather {
     
     struct Weather: Decodable {
-        let description, icon: String
+        let description: WeatherDescriptionTranslator
+        let icon: String
     }
     
     struct Main: Decodable {
