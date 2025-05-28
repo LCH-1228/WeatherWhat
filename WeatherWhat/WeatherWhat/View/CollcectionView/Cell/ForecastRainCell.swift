@@ -1,5 +1,5 @@
 //
-//  ForcastTemperatureCell.swift
+//  ForecastRainCell.swift
 //  WeatherWhat
 //
 //  Created by LCH on 5/22/25.
@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class ForcastRainCell: UICollectionViewCell {
+final class ForecastRainCell: UICollectionViewCell {
     
     private let timeLabel: UILabel = {
         let label = UILabel()
@@ -82,10 +82,10 @@ final class ForcastRainCell: UICollectionViewCell {
     
     func configure(with data: SectionOfCellModel.CellModel) {
         switch data {
-        case .rainPercentResult(let forcastData):
-            timeLabel.text = forcastData.time
-            weatherImage.image = UIImage(named: forcastData.weatherIcon)
-            tempLabel.text = forcastData.percent
+        case .rainPercentResult(let forecastData):
+            timeLabel.text = forecastData.time
+            weatherImage.image = UIImage(named: forecastData.weatherIcon)
+            tempLabel.text = forecastData.percent
         default:
             break
         }

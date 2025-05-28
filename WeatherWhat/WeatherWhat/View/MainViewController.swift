@@ -7,8 +7,14 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
+import RxDataSources
 
 final class MainViewController: UIViewController {
+    
+    var disposeBag = DisposeBag()
+    let viewModel = MainViewModel()
     
     private lazy var weatherCollectionView = UICollectionView(frame: .zero,
                                                       collectionViewLayout: createLayout())
@@ -19,6 +25,7 @@ final class MainViewController: UIViewController {
         configureUI()
         setConstraints()
         setCollectionView()
+        bind()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -42,31 +49,148 @@ final class MainViewController: UIViewController {
         }
     }
     
+    private func bind() {
+        let toogleRelay = PublishRelay<Bool>()
+        let input = MainViewModel.Input(fetchInitialData: Observable.just(()).map{ true },
+                                        toggleButtonTapped: toogleRelay)
+        let output = viewModel.transform(input)
+        
+        output.collectionViewData
+            .drive(weatherCollectionView.rx.items(
+                dataSource: createCollectionViewDataSoruce(input: input))
+            )
+            .disposed(by: disposeBag)
+        
+        
+        output.backgorund
+            .map { text -> String in
+                let weatherIconMatchModel = WeatherIconMatchModel()
+                let dictionary = weatherIconMatchModel.dictionary
+                guard let color = dictionary[text] else { return "pureWhite" }
+                return color
+            }
+            .drive { [weak self] colorName in
+                guard let self else { return }
+                let color = UIColor(named: colorName)
+                self.view.backgroundColor = color
+                self.weatherCollectionView.backgroundColor = color
+            }
+            .disposed(by: disposeBag)
+         
+    }
+    
+    private func createCollectionViewDataSoruce(input: MainViewModel.Input) -> RxCollectionViewSectionedReloadDataSource<SectionOfCellModel> {
+        
+        let dataSource = RxCollectionViewSectionedReloadDataSource<SectionOfCellModel> { [weak self] datasource, collectionView, indexPath, item in
+            guard let self else { return .init() }
+            switch item {
+            case .currentWeather:
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: String(describing: CurrentWeatherCell.self),
+                    for: indexPath
+                ) as? CurrentWeatherCell else {
+                    return .init()
+                }
+                
+                cell.configure(with: item)
+                
+                cell.rx.searchButtonTapped
+                    .bind { [weak self] _ in
+                        let searchVC = SearchViewController()
+                        self?.navigationController?.pushViewController(searchVC, animated: true)
+                    }
+                    .disposed(by: cell.disposeBag)
+                
+                cell.rx.toggleButtonTapped
+                    .map {
+                        if case .currentWeather(let model) = item {
+                            return model.toggleImage == "clearCelsius" ? false : true
+                        } else {
+                            return true
+                        }
+                    }
+                    .bind(to: input.toggleButtonTapped)
+                    .disposed(by: cell.disposeBag)
+                    
+                return cell
+                
+            case .timeForecastCellModel:
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: String(describing: ForecastTemperatureCell.self),
+                    for: indexPath
+                ) as? ForecastTemperatureCell else {
+                    return .init()
+                }
+                
+                cell.configure(with: item)
+                return cell
+                
+            case .rainPercentResult:
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: String(describing: ForecastRainCell.self),
+                    for: indexPath
+                ) as? ForecastRainCell else {
+                    return .init()
+                }
+                
+                cell.configure(with: item)
+                return cell
+                
+            case .dayForecastResult:
+                guard let cell = collectionView.dequeueReusableCell(
+                    withReuseIdentifier: String(describing: ForecastWeatherCell.self),
+                    for: indexPath
+                ) as? ForecastWeatherCell else {
+                    return .init()
+                }
+                
+                cell.configure(with: item)
+                return cell
+            }
+        } configureSupplementaryView: { UICollectionViewdataSource, collectionView, kind, indexPath in
+            
+            guard let header = collectionView.dequeueReusableSupplementaryView(
+                ofKind: UICollectionView.elementKindSectionHeader,
+                withReuseIdentifier: String(describing: SectionOfHeaderView.self),
+                for: indexPath
+            ) as? SectionOfHeaderView else {
+                return .init()
+            }
+            
+            if case 3  = indexPath.section {
+                return header
+            } else {
+                return .init()
+            }
+        }
+        
+        return dataSource
+    }
+    
     private func setCollectionView() {
-        weatherCollectionView.delegate = self
-        weatherCollectionView.dataSource = self
         
         weatherCollectionView.register(
-            UICollectionViewCell.self,
-            forCellWithReuseIdentifier: "Cell"
+            CurrentWeatherCell.self,
+            forCellWithReuseIdentifier:
+                String(describing: CurrentWeatherCell.self)
         )
         
         weatherCollectionView.register(
-            ForcastTemperatureCell.self,
+            ForecastTemperatureCell.self,
             forCellWithReuseIdentifier:
-                String(describing: ForcastTemperatureCell.self)
+                String(describing: ForecastTemperatureCell.self)
         )
         
         weatherCollectionView.register(
-            ForcastRainCell.self,
+            ForecastRainCell.self,
             forCellWithReuseIdentifier:
-                String(describing:ForcastRainCell.self)
+                String(describing:ForecastRainCell.self)
         )
         
         weatherCollectionView.register(
-            ForcastWeatherCell.self,
+            ForecastWeatherCell.self,
             forCellWithReuseIdentifier:
-                String(describing: ForcastWeatherCell.self)
+                String(describing: ForecastWeatherCell.self)
         )
         
         weatherCollectionView.register(
@@ -87,9 +211,9 @@ private extension MainViewController {
     // collectionView 섹션 구분을 위한 enum
     private enum WeatherCollectionViewSection: Int, CaseIterable {
         case currentWeather
-        case forcastTemperature
-        case forcastRain
-        case forcastWeather
+        case forecastTemperature
+        case forecastRain
+        case forecastWeather
     }
     
     // collectionView layout생성 메서드
@@ -104,12 +228,12 @@ private extension MainViewController {
             switch sectionType {
             case .currentWeather:
                 return self.createCurrentWeatherSection()
-            case .forcastTemperature:
-                return self.createForcastTemperatureSection()
-            case .forcastRain:
-                return self.createForcastRainSection()
-            case .forcastWeather:
-                return self.createForcastWeatherSection()
+            case .forecastTemperature:
+                return self.createForecastTemperatureSection()
+            case .forecastRain:
+                return self.createForecastRainSection()
+            case .forecastWeather:
+                return self.createForecastWeatherSection()
             }
         }
         
@@ -166,7 +290,7 @@ private extension MainViewController {
         
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .fractionalHeight(1.0)
+            heightDimension: .fractionalHeight(0.47)
         )
         let group = NSCollectionLayoutGroup.horizontal(
             layoutSize: groupSize,
@@ -181,7 +305,7 @@ private extension MainViewController {
     
     
     // 온도 예보 section 생성 메서드
-    private func createForcastTemperatureSection() -> NSCollectionLayoutSection {
+    private func createForecastTemperatureSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalHeight(1.0)
@@ -226,6 +350,7 @@ private extension MainViewController {
                                                           bottom: 0,
                                                           trailing: 0)
         
+        sectionBackgroundDecoration.zIndex = -1
         // 스크롤시 leading, trailing을 마스킹 하기 위한 decorationItem zIndex 설정
         sectionLeadingBackgroundDecoration.zIndex = 1
         sectionTrailingBackgroundDecoration.zIndex = 1
@@ -241,7 +366,7 @@ private extension MainViewController {
     }
     
     // 강수확률 예보 section 생성 메서드
-    private func createForcastRainSection() -> NSCollectionLayoutSection {
+    private func createForecastRainSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalHeight(1.0)
@@ -286,6 +411,7 @@ private extension MainViewController {
                                                           bottom: 0,
                                                           trailing: 0)
         
+        sectionBackgroundDecoration.zIndex = -1
         // 스크롤시 leading, trailing을 마스킹 하기 위한 decorationItem zIndex 설정
         sectionLeadingBackgroundDecoration.zIndex = 1
         sectionTrailingBackgroundDecoration.zIndex = 1
@@ -301,7 +427,7 @@ private extension MainViewController {
     }
     
     // 날씨예보 section 생성 메서드
-    private func createForcastWeatherSection() -> NSCollectionLayoutSection {
+    private func createForecastWeatherSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalHeight(1.0)
@@ -343,6 +469,8 @@ private extension MainViewController {
             elementKind: "baseBackground"
         )
         
+        sectionBackgroundDecoration.zIndex = -1
+        
         // decorationItem 크기 조정을 위한 inset 설정
         sectionBackgroundDecoration.contentInsets = .init(top: 35,
                                                           leading: 0,
@@ -355,141 +483,5 @@ private extension MainViewController {
         // section에 decorationItem 추가
         section.decorationItems = [sectionBackgroundDecoration]
         return section
-    }
-}
-
-// TODO: Layout작업 완료후 extension RxDataSource로 변경
-extension MainViewController: UICollectionViewDelegate {
-    
-}
-
-extension MainViewController: UICollectionViewDataSource {
-    
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return WeatherCollectionViewSection.allCases.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView,
-                        viewForSupplementaryElementOfKind kind: String,
-                        at indexPath: IndexPath) -> UICollectionReusableView {
-        
-        guard let sectionType = WeatherCollectionViewSection(
-            rawValue: indexPath.section
-        ) else {
-            return .init()
-        }
-        
-        switch sectionType {
-        case .forcastWeather:
-            guard let headerView = collectionView.dequeueReusableSupplementaryView(
-                ofKind: UICollectionView.elementKindSectionHeader,
-                withReuseIdentifier: String(describing: SectionOfHeaderView.self),
-                for: indexPath
-            ) as? SectionOfHeaderView else {
-                return .init()
-            }
-            
-            headerView.configure(title: "5일 예보")
-            return headerView
-        default:
-            return .init()
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView,
-                        numberOfItemsInSection section: Int) -> Int {
-        
-        guard let sectionType = WeatherCollectionViewSection(
-            rawValue: section
-        ) else {
-            return 0
-        }
-        
-        switch sectionType {
-        case .currentWeather:
-            return 1
-        case .forcastTemperature:
-            return 10
-        case .forcastRain:
-            return 10
-        case .forcastWeather:
-            return 5
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView,
-                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        guard let sectionType = WeatherCollectionViewSection(
-            rawValue: indexPath.section
-        ) else {
-            return .init()
-        }
-        
-        switch sectionType {
-        case .currentWeather:
-            let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: "Cell",
-                for: indexPath
-            )
-            
-            cell.backgroundColor = .amber
-            
-            return cell
-        case .forcastTemperature:
-            guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: String(describing: ForcastTemperatureCell.self),
-                for: indexPath
-            ) as? ForcastTemperatureCell else {
-                return .init()
-            }
-            
-            let tempValue = SectionOfCellModel.CellModel.timeForecastCellModel (
-                .init(
-                    weatherIcon: "01d",
-                    time: "06시",
-                    temp: "24°"
-                )
-            )
-            cell.configure(with: tempValue)
-            return cell
-            
-        case .forcastRain:
-            guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: String(describing: ForcastRainCell.self),
-                for: indexPath
-            ) as? ForcastRainCell else {
-                return .init()
-            }
-            
-            let tempValue = SectionOfCellModel.CellModel.rainPercentResult(
-                .init(
-                    weatherIcon: "popIcon",
-                    time: "09시",
-                    percent: "56"
-                )
-            )
-            cell.configure(with: tempValue)
-            return cell
-            
-        case .forcastWeather:
-            guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: String(describing: ForcastWeatherCell.self),
-                for: indexPath
-            ) as? ForcastWeatherCell else {
-                return .init()
-            }
-            
-            let tempValue = SectionOfCellModel.CellModel.dayForecastResult(
-                .init(
-                    weatherIcon: "50d",
-                    day: Date(),
-                    tempMax: "36°",
-                    tempMin: "17°"
-                )
-            )
-            cell.configure(with: tempValue)
-            return cell
-        }
     }
 }
