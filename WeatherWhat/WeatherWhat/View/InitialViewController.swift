@@ -31,7 +31,7 @@ class InitialViewController: UIViewController {
         return searchView
     }()
     
-    private let starButton: UIButton = {
+    private let startButton: UIButton = {
         let button = UIButton()
         button.setTitle("시작하기", for: .normal)
         button.setTitleColor(.pureWhite, for: .normal)
@@ -88,18 +88,21 @@ class InitialViewController: UIViewController {
             .withUnretained(self)
             .asDriver(onErrorDriveWith: .empty())
             .drive(onNext: { vc, isEnabled in
-                vc.starButton.isEnabled = isEnabled
+                vc.startButton.isEnabled = isEnabled
                 if isEnabled {
-                    vc.starButton.backgroundColor = .mainBlue
+                    vc.startButton.backgroundColor = .mainBlue
                 }
             })
             .disposed(by: disposeBag)
         
         // 시작하기 버튼 클릭 시 MainVC로 이동
-        starButton.rx.tap
+        startButton.rx.tap
             .withUnretained(self)
             .asDriver(onErrorDriveWith: .empty())
             .drive(onNext: { vc, _ in
+                if let currentData: LocationData = try? vc.viewModel.userDefaults.getData(with: .currentLocation) {
+                  vc.viewModel.userDefaults.updateLocationHistory(with: currentData)
+                }
                 let mainVC = MainViewController()
                 vc.navigationController?.pushViewController(mainVC, animated: true)
             })
@@ -122,7 +125,7 @@ class InitialViewController: UIViewController {
         view.backgroundColor = .pureWhite
         
         [
-            starButton,
+            startButton,
             logoImageView,
             searchView
         ].forEach { view.addSubview($0) }
@@ -141,7 +144,7 @@ class InitialViewController: UIViewController {
             $0.height.equalTo(200)
         }
         
-        starButton.snp.makeConstraints {
+        startButton.snp.makeConstraints {
             $0.top.equalToSuperview().offset(644)
             $0.centerX.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(128)
