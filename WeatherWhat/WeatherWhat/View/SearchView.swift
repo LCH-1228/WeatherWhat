@@ -15,6 +15,8 @@ final class SearchView: UIView {
     let searchBar = UISearchBar()
     let tableView = UITableView()
 
+    private let imageView = UIImageView()
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureUI()

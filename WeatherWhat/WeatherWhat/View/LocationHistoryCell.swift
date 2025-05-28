@@ -9,12 +9,12 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class LocationHistoryCell: UITableViewCell {
+final class LocationHistoryCell: UITableViewCell {
 
-    let label = UILabel()
+    private let label = UILabel()
     let cancelButton = UIButton()
 
-    let disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -26,7 +26,7 @@ class LocationHistoryCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configureUI() {
+    private func configureUI() {
         self.backgroundColor = .clear
 
         [label, cancelButton].forEach {

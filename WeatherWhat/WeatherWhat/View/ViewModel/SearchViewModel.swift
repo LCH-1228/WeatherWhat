@@ -11,12 +11,20 @@ import RxSwift
 
 final class SearchViewModel {
 
-    let totalData = TotalAddressDataInfo().getAllData()
+    private let totalData = TotalAddressDataInfo().getAllData()
 
     let userDefaults = UserDefaultsManager.shared
 
+    var disposeBag = DisposeBag()
+
     func transform(input: Input) -> Output {
-        let userInput = input.addressInput
+
+        let reloadTrigger = Observable.merge(
+            input.addressInput,
+            input.deleteRequest.map { _ in "init"}
+        )
+
+        let userInput = reloadTrigger
             .withUnretained(self)
             .map { vm, text in
                 if text == "init" || text.isEmpty {
@@ -43,6 +51,14 @@ final class SearchViewModel {
             }
             .compactMap { $0 }
 
+        input.deleteRequest
+            .withUnretained(self)
+            .asDriver(onErrorDriveWith: .empty())
+            .drive { vm, index in
+                vm.userDefaults.removeData(index: index)
+            }
+            .disposed(by: disposeBag)
+
         let isTableViewHidden = input.addressInput
             .map { text -> Bool in
                 text.isEmpty
@@ -56,6 +72,7 @@ extension SearchViewModel{
     struct Input {
         let addressInput: Observable<String>
         let addressSelected: Observable<IndexPath>
+        let deleteRequest: Observable<Int>
     }
 
     struct Output {
