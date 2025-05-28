@@ -19,13 +19,13 @@ final class UserDefaultsManager {
      */
     func getData<T: Decodable>(with key: userDefaultsKey) throws -> T {
         guard let data = defaults.data(forKey: key.rawValue) else {
-            throw NSError(domain: "데이터 불러오기 실패", code: -1, userInfo: nil)
+            throw UserDefaultsError.failDataFetch
         }
         do {
             let decodedData = try JSONDecoder().decode(T.self, from: data)
             return decodedData
         } catch {
-            throw NSError(domain: "디코딩 실패", code: -1, userInfo: nil)
+            throw UserDefaultsError.failDecoding
         }
 
     }
