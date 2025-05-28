@@ -11,9 +11,9 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-class InitialViewController: UIViewController {
+final class InitialViewController: UIViewController {
 
-    let viewModel = InitialViewModel()
+    private let viewModel = InitialViewModel()
     private var disposeBag = DisposeBag()
     
     private let logoImageView: UIImageView = {
@@ -24,7 +24,7 @@ class InitialViewController: UIViewController {
         return imageView
     }()
     
-    let searchView: SearchView = {
+    private let searchView: SearchView = {
         let searchView = SearchView()
         searchView.searchBar.setImage(UIImage(), for: .search, state: .normal)
         searchView.tableView.isHidden = true

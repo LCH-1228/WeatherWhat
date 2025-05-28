@@ -12,7 +12,7 @@ final class BaseBackground: UICollectionReusableView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .mainBlue
+        backgroundColor = .subBlue
         layer.cornerRadius = 16
         layer.masksToBounds = true
         clipsToBounds = true

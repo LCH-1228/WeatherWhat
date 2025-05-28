@@ -8,11 +8,13 @@
 import UIKit
 import SnapKit
 final class SplashViewController: UIViewController {
+
     private let logoImageView: UIImageView = {
         let iv = UIImageView(image: UIImage(named: "splashLogo"))
         iv.contentMode = .scaleAspectFit
         return iv
     }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -24,6 +26,7 @@ final class SplashViewController: UIViewController {
             make.bottom.equalToSuperview().inset(362)
         }
     }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         // 1.2초 정도 보여준 뒤 메인 화면으로

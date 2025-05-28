@@ -65,16 +65,6 @@ final class UserDefaultsManager {
         userHistory?.history.remove(at: index)
         saveData(key: .locationHistory, value: userHistory)
     }
-
-    /**
-     데이터를 삭제할 수 있는 메서드입니다.
-     - 데이터는 배열형태로 저장되며, locationHistory key에 접근하여 확인할 수 있습니다.
-     - 전체 삭제 구현 시에 사용할 수 있습니다.
-     */
-    func removeData(with key: userDefaultsKey) {
-        defaults.removeObject(forKey: key.rawValue)
-    }
-
 }
 
 extension UserDefaultsManager {
