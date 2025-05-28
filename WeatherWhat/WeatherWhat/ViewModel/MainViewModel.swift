@@ -23,29 +23,30 @@ final class MainViewModel {
             .flatMap { vm, _ -> Observable<LocationData> in
                 let location = vm.getCurrentLocation()
                 return location
-                    .catch { error in
-                        print(error.localizedDescription)
+                    .catch { [weak self] error in
+                        self?.errorRelay.accept(error)
                         return .empty()
                     }
             }
-                
+        
         let networkResponse = location
             .withUnretained(self)
             .flatMap { vm, location -> Observable<(CurrentWeather, ForecastWeather)> in
-                    let currentWeather = vm.fetchCurrentWeather(lat: location.lat,
-                                                                lon: location.lon)
-                    let forecastWeather = vm.fetchForcastWeatehr(lat: location.lat,
-                                                                 lon: location.lon)
+                let currentWeather = vm.fetchCurrentWeather(lat: location.lat,
+                                                            lon: location.lon)
+                let forecastWeather = vm.fetchForecastWeatehr(lat: location.lat,
+                                                             lon: location.lon)
                 
-                    return Observable.zip(currentWeather, forecastWeather)
+                return Observable.zip(currentWeather, forecastWeather)
             }
             .share()
         
         let collectionViewData = Observable.merge(input.fetchInitialData,
                                                   input.toggleButtonTapped.asObservable())
-            .flatMapLatest { isCellciius in
+            .debug()
+            .flatMapLatest { isCelsius in
                 return networkResponse.map {
-                    ($0.0, $0.1, isCellciius)
+                    ($0.0, $0.1, isCelsius)
                 }
             }
             .withLatestFrom(location) { weather, location in
@@ -56,28 +57,28 @@ final class MainViewModel {
                 
                 let currenWeatehrData = response.0
                 let forecastWeatherData = response.1
-                let isCellciius = response.2
+                let isCelsius = response.2
                 let currentLocation = response.3
                 
                 let currentWeatherSectionItem = vm.createFirstSectionItem(
                     weather: currenWeatehrData,
                     location: currentLocation,
-                    isCellciius: isCellciius
+                    isCelsius: isCelsius
                 )
                 
                 let timeForecastSectionItem = vm.createSecondSectionItem(
                     weather: forecastWeatherData,
-                    isCellciius: isCellciius
+                    isCelsius: isCelsius
                 )
                 
                 let rainPercentSectionItem = vm.createThirdSectionItem(
                     weather: forecastWeatherData,
-                    isCellciius: isCellciius
+                    isCelsius: isCelsius
                 )
                 
-                let dayForcastSectionItem = vm.createForthSectionItem(
+                let dayForecastSectionItem = vm.createForthSectionItem(
                     with: forecastWeatherData,
-                    isCellciius: isCellciius
+                    isCelsius: isCelsius
                 )
                 
                 let currentWeatherSection = SectionOfCellModel(
@@ -95,18 +96,18 @@ final class MainViewModel {
                     items: rainPercentSectionItem
                 )
                 
-                let dayForcastSection = SectionOfCellModel(
+                let dayForecastSection = SectionOfCellModel(
                     section: .dayForecastResult,
-                    items: dayForcastSectionItem
+                    items: dayForecastSectionItem
                 )
                 
                 let dataSource: [SectionOfCellModel] = [
                     currentWeatherSection,
                     timeForecastSection,
                     rainPercentSection,
-                    dayForcastSection
+                    dayForecastSection
                 ]
-                                
+                
                 return dataSource
             }
             .asDriver(onErrorDriveWith: .empty())
@@ -145,7 +146,7 @@ final class MainViewModel {
             .map(CurrentWeather.self)
     }
     
-    private func fetchForcastWeatehr(lat: String, lon: String) -> Observable<ForecastWeather> {
+    private func fetchForecastWeatehr(lat: String, lon: String) -> Observable<ForecastWeather> {
         return weatehrProvider.rx.request(.forecastCelsius(lat: lat, lon: lon))
             .asObservable()
             .map(ForecastWeather.self)
@@ -162,57 +163,57 @@ final class MainViewModel {
     }
     
     private func createFirstSectionItem(weather data: CurrentWeather,
-                                    location: LocationData,
-                                    isCellciius: Bool) -> [SectionOfCellModel.Item] {
+                                        location: LocationData,
+                                        isCelsius: Bool) -> [SectionOfCellModel.Item] {
         return [SectionOfCellModel.Item.currentWeather(
             .init(
-                toggleImage: isCellciius ? "clearCelsius" : "clearFahrenheit",
+                toggleImage:                     isCelsius ? "clearCelsius" : "clearFahrenheit",
                 address: location.address,
                 weatherIcon: String(data.weather.first!.icon.prefix(2)),
                 tempMax: setUnits(number: data.main.tempMax,
-                                  isCelsius: isCellciius),
+                                  isCelsius:                     isCelsius),
                 tempMin: setUnits(number: data.main.tempMin,
-                                  isCelsius: isCellciius),
+                                  isCelsius:                     isCelsius),
                 temp: setUnits(number: data.main.temp,
-                               isCelsius: isCellciius),
+                               isCelsius:                     isCelsius),
                 description: data.weather.first!.description.displayName, backgroundColor: sendWeatherColor(with: data)))
         ]
     }
     
     
     private func createSecondSectionItem(weather data: ForecastWeather,
-                                     isCellciius: Bool) -> [SectionOfCellModel.Item] {
+                                         isCelsius: Bool) -> [SectionOfCellModel.Item] {
         
-        return data.list.map { forcastData in
+        return data.list.map { forecastData in
             SectionOfCellModel.Item.timeForecastCellModel(
                 .init(
-                    weatherIcon: String(forcastData.weather.first!.icon.prefix(2)),
-                    time: convertTimeToData(input: forcastData.dtTxt),
-                    temp: setUnits(number: forcastData.main.temp,
-                                   isCelsius: isCellciius)
+                    weatherIcon: String(forecastData.weather.first!.icon.prefix(2)),
+                    time: convertTimeToData(input: forecastData.dtTxt),
+                    temp: setUnits(number: forecastData.main.temp,
+                                   isCelsius:                     isCelsius)
                 )
             )
         }
     }
     
     private func createThirdSectionItem(weather data: ForecastWeather,
-                                        isCellciius: Bool) -> [SectionOfCellModel.Item] {
+                                        isCelsius: Bool) -> [SectionOfCellModel.Item] {
         
-        return data.list.map { forcastData in
+        return data.list.map { forecastData in
             SectionOfCellModel.Item.rainPercentResult(
                 .init(
                     weatherIcon: "popIcon",
-                    time: convertTimeToData(input: forcastData.dtTxt),
-                    percent: "\(Int(forcastData.pop * 100))")
-                )
+                    time: convertTimeToData(input: forecastData.dtTxt),
+                    percent: "\(Int(forecastData.pop * 100))")
+            )
         }
     }
     
-    private func createForthSectionItem(with data: ForecastWeather, isCellciius: Bool) -> [SectionOfCellModel.Item] {
-        let convertedForcasData = convetForcastData(with: data)
+    private func createForthSectionItem(with data: ForecastWeather,                     isCelsius: Bool) -> [SectionOfCellModel.Item] {
+        let convertedForecasData = convetForecastData(with: data)
         
         let dic = Dictionary(
-            grouping: convertedForcasData,
+            grouping: convertedForecasData,
             by: { $0.dtTxt }
         )
         
@@ -233,9 +234,9 @@ final class MainViewModel {
                 return .dayForecastResult(.init(weatherIcon: String(icon!.prefix(2)),
                                                 day: convertDateToDay(input: date),
                                                 tempMax: setUnits(number: maxTemp!,
-                                                                     isCelsius: isCellciius),
+                                                                  isCelsius:                     isCelsius),
                                                 tempMin: setUnits(number: minTemp!,
-                                                                  isCelsius: isCellciius)
+                                                                  isCelsius:                     isCelsius)
                                                )
                 )
             }
@@ -252,20 +253,20 @@ final class MainViewModel {
         return colorName
     }
     
-    private func convetForcastData(with data: ForecastWeather) -> [ForecastWeather.List] {
-        return data.list.map { forcast in
+    private func convetForecastData(with data: ForecastWeather) -> [ForecastWeather.List] {
+        return data.list.map { forecast in
             let weather = [
                 ForecastWeather.List.Weather(
-                    description: forcast.weather.first!.description,
-                    icon: String(forcast.weather.first!.icon.prefix(2))
+                    description: forecast.weather.first!.description,
+                    icon: String(forecast.weather.first!.icon.prefix(2))
                 )
             ]
             
-            let day = convertDateTimeToDate(input: forcast.dtTxt)
+            let day = convertDateTimeToDate(input: forecast.dtTxt)
             return ForecastWeather.List(
-                main: forcast.main,
+                main: forecast.main,
                 weather: weather,
-                pop: forcast.pop,
+                pop: forecast.pop,
                 dtTxt: day
             )
         }
