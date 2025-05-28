@@ -111,9 +111,18 @@ final class MainViewModel {
             }
             .asDriver(onErrorDriveWith: .empty())
         
+        let background = input.fetchInitialData
+            .flatMapFirst { _ in
+                return networkResponse.map {
+                    $0.0.weather.first!.icon
+                }
+            }
+            .take(1)
+            .asDriver(onErrorDriveWith: .empty())
+        
         return Output(
             collectionViewData: collectionViewData,
-            backgorund: networkResponse.map { $0.0.weather.first!.icon }.asDriver(onErrorDriveWith: .empty()),
+            backgorund: background,
             error: errorRelay.asDriver(onErrorDriveWith: .empty())
         )
     }
