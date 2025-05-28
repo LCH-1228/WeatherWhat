@@ -1,5 +1,5 @@
 //
-//  ForcastWeatherCell.swift
+//  ForecastWeatherCell.swift
 //  WeatherWhat
 //
 //  Created by LCH on 5/22/25.
@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class ForcastWeatherCell: UICollectionViewCell {
+final class ForecastWeatherCell: UICollectionViewCell {
     
     private let dayLabel: UILabel = {
         let label = UILabel()
@@ -121,11 +121,11 @@ final class ForcastWeatherCell: UICollectionViewCell {
     
     func configure(with data: SectionOfCellModel.CellModel) {
         switch data {
-        case .dayForecastResult(let forcastData):
-            dayLabel.text = forcastData.day
-            weatherImage.image = UIImage(named: forcastData.weatherIcon)
-            tempMinLabel.text = forcastData.tempMin
-            tempMaxLabel.text = forcastData.tempMax
+        case .dayForecastResult(let forecastData):
+            dayLabel.text = forecastData.day
+            weatherImage.image = UIImage(named: forecastData.weatherIcon)
+            tempMinLabel.text = forecastData.tempMin
+            tempMaxLabel.text = forecastData.tempMax
         default:
             break
         }

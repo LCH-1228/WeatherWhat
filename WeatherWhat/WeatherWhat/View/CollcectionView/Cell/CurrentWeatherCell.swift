@@ -220,6 +220,7 @@ final class CurrentWeatherCell: UICollectionViewCell {
             tempLabel.text = weatherData.temp
             tempMaxLabel.text = weatherData.tempMax
             descriptionLabel.text = weatherData.description
+            contentView.backgroundColor = UIColor(named: weatherData.backgroundColor)
         default:
             break
         }

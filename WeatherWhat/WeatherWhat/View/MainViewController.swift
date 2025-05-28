@@ -116,9 +116,9 @@ final class MainViewController: UIViewController {
                 
             case .timeForecastCellModel:
                 guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: String(describing: ForcastTemperatureCell.self),
+                    withReuseIdentifier: String(describing: ForecastTemperatureCell.self),
                     for: indexPath
-                ) as? ForcastTemperatureCell else {
+                ) as? ForecastTemperatureCell else {
                     return .init()
                 }
                 
@@ -127,9 +127,9 @@ final class MainViewController: UIViewController {
                 
             case .rainPercentResult:
                 guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: String(describing: ForcastRainCell.self),
+                    withReuseIdentifier: String(describing: ForecastRainCell.self),
                     for: indexPath
-                ) as? ForcastRainCell else {
+                ) as? ForecastRainCell else {
                     return .init()
                 }
                 
@@ -138,9 +138,9 @@ final class MainViewController: UIViewController {
                 
             case .dayForecastResult:
                 guard let cell = collectionView.dequeueReusableCell(
-                    withReuseIdentifier: String(describing: ForcastWeatherCell.self),
+                    withReuseIdentifier: String(describing: ForecastWeatherCell.self),
                     for: indexPath
-                ) as? ForcastWeatherCell else {
+                ) as? ForecastWeatherCell else {
                     return .init()
                 }
                 
@@ -176,21 +176,21 @@ final class MainViewController: UIViewController {
         )
         
         weatherCollectionView.register(
-            ForcastTemperatureCell.self,
+            ForecastTemperatureCell.self,
             forCellWithReuseIdentifier:
-                String(describing: ForcastTemperatureCell.self)
+                String(describing: ForecastTemperatureCell.self)
         )
         
         weatherCollectionView.register(
-            ForcastRainCell.self,
+            ForecastRainCell.self,
             forCellWithReuseIdentifier:
-                String(describing:ForcastRainCell.self)
+                String(describing:ForecastRainCell.self)
         )
         
         weatherCollectionView.register(
-            ForcastWeatherCell.self,
+            ForecastWeatherCell.self,
             forCellWithReuseIdentifier:
-                String(describing: ForcastWeatherCell.self)
+                String(describing: ForecastWeatherCell.self)
         )
         
         weatherCollectionView.register(
@@ -211,9 +211,9 @@ private extension MainViewController {
     // collectionView 섹션 구분을 위한 enum
     private enum WeatherCollectionViewSection: Int, CaseIterable {
         case currentWeather
-        case forcastTemperature
-        case forcastRain
-        case forcastWeather
+        case forecastTemperature
+        case forecastRain
+        case forecastWeather
     }
     
     // collectionView layout생성 메서드
@@ -228,12 +228,12 @@ private extension MainViewController {
             switch sectionType {
             case .currentWeather:
                 return self.createCurrentWeatherSection()
-            case .forcastTemperature:
-                return self.createForcastTemperatureSection()
-            case .forcastRain:
-                return self.createForcastRainSection()
-            case .forcastWeather:
-                return self.createForcastWeatherSection()
+            case .forecastTemperature:
+                return self.createForecastTemperatureSection()
+            case .forecastRain:
+                return self.createForecastRainSection()
+            case .forecastWeather:
+                return self.createForecastWeatherSection()
             }
         }
         
@@ -305,7 +305,7 @@ private extension MainViewController {
     
     
     // 온도 예보 section 생성 메서드
-    private func createForcastTemperatureSection() -> NSCollectionLayoutSection {
+    private func createForecastTemperatureSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalHeight(1.0)
@@ -366,7 +366,7 @@ private extension MainViewController {
     }
     
     // 강수확률 예보 section 생성 메서드
-    private func createForcastRainSection() -> NSCollectionLayoutSection {
+    private func createForecastRainSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalHeight(1.0)
@@ -427,7 +427,7 @@ private extension MainViewController {
     }
     
     // 날씨예보 section 생성 메서드
-    private func createForcastWeatherSection() -> NSCollectionLayoutSection {
+    private func createForecastWeatherSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .fractionalHeight(1.0)
